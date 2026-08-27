@@ -12,6 +12,7 @@ npm run build    # production bundle in dist/
 npm run preview  # serve the production bundle locally
 npm run images   # regenerate the responsive image variants
 npm run seo      # regenerate sitemap.xml and robots.txt
+npm test         # run the test suite
 ```
 
 `dev` and `build` run the generators first, so derived files are never out of
@@ -38,6 +39,22 @@ and every word of the copy, and removes the duplication:
 
 Page copy that is list-shaped (the nine cuisines, the FAQ, the routes, the
 pillars) lives in `src/data/content.js`, so components stay layout-only.
+
+## Tests
+
+`npm test` runs the suite (vitest + testing-library). It covers the behaviour
+that is easy to break silently in a refactor:
+
+- **Data integrity** — every photograph resolves to a real asset with alt text,
+  a caption and a correctly ordered WebP ladder that is never upscaled past its
+  source; the gallery lists each photograph exactly once; every internal footer
+  link points at a real route.
+- **Header** — the sheet opens, locks the page behind it, closes on Escape, and
+  stays out of the tab order while closed.
+- **Gallery** — filters narrow the wall and restore it, `aria-selected` tracks
+  the active filter, no filter is ever empty, and the lightbox opens and closes.
+- **Reservation form** — the WhatsApp handoff carries the right number and the
+  guest's details, marks empty fields, and suppresses the browser's own submit.
 
 ## Layout
 

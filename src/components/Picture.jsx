@@ -20,6 +20,11 @@ export function Picture({
 }) {
   const loading = priority ? 'eager' : 'lazy';
 
+  // React 18 passes through only the lowercase spelling of this attribute,
+  // and warns on any unknown prop even when its value is undefined — so it
+  // is added conditionally rather than set to undefined.
+  const priorityHint = priority ? { fetchpriority: 'high' } : {};
+
   return (
     // `picture` is display:contents, so styling and refs belong on the img.
     <picture>
@@ -33,7 +38,7 @@ export function Picture({
         height={photo.height}
         loading={loading}
         decoding={priority ? 'sync' : 'async'}
-        fetchPriority={priority ? 'high' : undefined}
+        {...priorityHint}
         style={style}
         {...rest}
       />

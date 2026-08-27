@@ -63,7 +63,14 @@ export function Header() {
         </div>
       </header>
 
-      <div id="nav-sheet" className={`sheet ${open ? 'on' : ''}`.trim()} hidden={!open}>
+      {/* `inert` rather than `hidden`: it keeps the links out of the tab
+          order and the accessibility tree without display:none, which would
+          skip the reveal transition. */}
+      <div
+        id="nav-sheet"
+        className={`sheet ${open ? 'on' : ''}`.trim()}
+        {...(open ? {} : { inert: '' })}
+      >
         <nav aria-label="Mobile">
           {navLinks.map(({ to, sheetLabel, index }) => (
             <NavLink key={to} to={to} end={to === '/'}>
