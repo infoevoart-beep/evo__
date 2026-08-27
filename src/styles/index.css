@@ -1,0 +1,11 @@
+/*
+ * Hillsedge Beragala — one stylesheet for the whole site.
+ * The static build shipped the same ~30KB of CSS inline on all six pages;
+ * everything now lives here once, in layers.
+ */
+@import './tokens.css';
+@import './base.css';
+@import './components.css';
+@import './sections.css';
+@import './motion.css';
+@import './responsive.css';

@@ -1,0 +1,139 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--header-h) + 12px);
+}
+
+body {
+  margin: 0;
+  background: var(--bone);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-weight: 300;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  /* Nothing may push the page sideways on a narrow screen. */
+  overflow-x: hidden;
+  overscroll-behavior-y: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: 0;
+  background: none;
+  color: inherit;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  line-height: 1.04;
+  margin: 0;
+  letter-spacing: -0.035em;
+  /* Long place names must not force a horizontal scrollbar. */
+  overflow-wrap: break-word;
+}
+
+p {
+  overflow-wrap: break-word;
+}
+
+:focus-visible {
+  outline: 2px solid var(--glow);
+  outline-offset: 3px;
+}
+
+/* Grid and flex children default to min-content width, which is what keeps
+   wide tables, maps and images from stretching the page on mobile. */
+.wrap > *,
+.split > *,
+.vg > * {
+  min-width: 0;
+}
+
+.wrap {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding-inline: calc(var(--gutter) + var(--safe-l)) calc(var(--gutter) + var(--safe-r));
+}
+
+.lab {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  font-weight: 400;
+}
+
+.lab-ember {
+  color: var(--ember);
+}
+
+.lab-glow {
+  color: var(--glow);
+}
+
+.sec {
+  padding-block: clamp(64px, 11vw, 150px);
+}
+
+.section-flush-top {
+  padding-top: 0;
+}
+
+.section-action {
+  margin-top: clamp(28px, 4vw, 44px);
+}
+
+.light-sec {
+  background: var(--bone);
+}
+
+.sand-sec {
+  background: var(--sand);
+}
+
+.inline-link {
+  color: var(--glow);
+  border-bottom: 1px solid rgba(224, 138, 69, 0.45);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

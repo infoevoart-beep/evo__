@@ -1,0 +1,93 @@
+/*
+ * Scroll-in choreography. Every entry direction the six pages used is
+ * expressed here once; components pick one with `motion="…"`.
+ */
+.scene {
+  perspective: 1500px;
+  perspective-origin: 50% 42%;
+}
+
+.d3 {
+  opacity: 0;
+  transition: opacity 0.95s var(--ez), transform 1.15s var(--ez);
+  will-change: transform, opacity;
+}
+
+.d3-flat {
+  transform: translate3d(0, 34px, -70px) rotateX(8deg);
+}
+
+.d3-up {
+  transform: translate3d(0, 70px, -200px) scale(0.94);
+}
+
+.d3-left {
+  transform: translate3d(-40px, 40px, -160px) rotateY(15deg);
+}
+
+.d3-right {
+  transform: translate3d(40px, 40px, -160px) rotateY(-15deg);
+}
+
+.d3-none {
+  transform: translate3d(0, 28px, 0);
+}
+
+.d3.in {
+  opacity: 1;
+  transform: none;
+}
+
+.par-img {
+  will-change: transform;
+}
+
+/* Hover flourishes: cursor devices only, so touch users never get stuck
+   with a half-applied hover state after a tap. */
+@media (hover: hover) and (pointer: fine) {
+  .sh-photo:hover img,
+  .sp-media:hover img,
+  .gwall figure:hover img {
+    transform: scale(1.05);
+  }
+
+  .mos figure:hover img {
+    transform: scale(1.06);
+  }
+
+  .mos figure:hover figcaption,
+  .gwall figure:hover figcaption {
+    opacity: 1;
+  }
+
+  .gwall figure:hover {
+    box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.8);
+  }
+
+  .tier {
+    transition: transform 0.8s var(--ez), border-color 0.5s, background 0.5s;
+  }
+
+  .tier:hover {
+    transform: translateZ(30px) translateY(-4px);
+    border-color: rgba(224, 138, 69, 0.45);
+  }
+
+  .step:hover {
+    padding-left: 10px;
+  }
+
+  .hello span:hover {
+    border-color: var(--glow);
+    color: #fff;
+    transform: translateY(-3px);
+  }
+}
+
+/* On touch, captions are always legible instead of hover-gated. */
+@media (hover: none) {
+  .mos figcaption,
+  .gwall figcaption {
+    opacity: 1;
+  }
+}
