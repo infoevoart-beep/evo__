@@ -2,7 +2,7 @@ import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import { Button } from '../components/Button';
 
 export default function NotFound() {
-  useDocumentTitle('Page not found');
+  useDocumentTitle('Page not found', undefined, { noindex: true });
 
   return (
     <section className="sec state not-found">

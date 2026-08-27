@@ -1,15 +1,51 @@
 import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { site } from '../data/site';
 
-/** Keeps the tab title in step with the route. */
-export function useDocumentTitle(title, description) {
-  useEffect(() => {
-    document.title = title ? `${title} — ${site.name}` : `${site.name} — Mountain Smokehouse & Dining Experience`;
+const DEFAULT_TITLE = `${site.name} — Mountain Smokehouse & Dining Experience`;
 
-    if (!description) return;
-    const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute('content', description);
-  }, [title, description]);
+/** Creates the tag if it is missing, then sets it. */
+function setMeta(selector, attributes) {
+  let tag = document.head.querySelector(selector);
+  if (!tag) {
+    tag = document.createElement(selector.startsWith('link') ? 'link' : 'meta');
+    document.head.appendChild(tag);
+  }
+  for (const [name, value] of Object.entries(attributes)) tag.setAttribute(name, value);
+  return tag;
+}
+
+/**
+ * Keeps the tab title, description, canonical URL, robots directive and Open
+ * Graph tags in step with the route. Absolute URLs come from the live origin,
+ * so they are correct on whatever domain the site is served from.
+ */
+export function useDocumentTitle(title, description, { noindex = false } = {}) {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    const fullTitle = title ? `${title} — ${site.name}` : DEFAULT_TITLE;
+    const url = `${window.location.origin}${pathname}`;
+
+    document.title = fullTitle;
+    setMeta('meta[name="robots"]', {
+      name: 'robots',
+      content: noindex ? 'noindex, follow' : 'index, follow',
+    });
+    setMeta('link[rel="canonical"]', { rel: 'canonical', href: url });
+    setMeta('meta[property="og:title"]', { property: 'og:title', content: fullTitle });
+    setMeta('meta[property="og:url"]', { property: 'og:url', content: url });
+    setMeta('meta[property="og:type"]', { property: 'og:type', content: 'website' });
+    setMeta('meta[name="twitter:card"]', { name: 'twitter:card', content: 'summary_large_image' });
+
+    if (description) {
+      setMeta('meta[name="description"]', { name: 'description', content: description });
+      setMeta('meta[property="og:description"]', {
+        property: 'og:description',
+        content: description,
+      });
+    }
+  }, [title, description, noindex, pathname]);
 }
 
 export default useDocumentTitle;

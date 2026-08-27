@@ -11,11 +11,13 @@ npm run dev      # development server
 npm run build    # production bundle in dist/
 npm run preview  # serve the production bundle locally
 npm run images   # regenerate the responsive image variants
+npm run seo      # regenerate sitemap.xml and robots.txt
 ```
 
-`dev` and `build` run `images` first, so the responsive variants are always in
-step with the source photographs. The variants themselves are derived and
-gitignored — only the full-size originals in `src/assets/images` are tracked.
+`dev` and `build` run the generators first, so derived files are never out of
+step with their sources. Those outputs — the image variants, `sitemap.xml` and
+`robots.txt` — are gitignored; only the full-size originals in
+`src/assets/images` and the route list they come from are tracked.
 
 ## What this is
 
@@ -87,11 +89,34 @@ The layout is fluid from 320 px upward, verified with no horizontal overflow at
 - A separate landscape rule keeps the hero from filling more than a short
   screen.
 
-## Notes
+## SEO and metadata
 
-- Routing is client-side (`react-router-dom`). Deploying to a static host needs
-  the usual SPA rewrite so deep links such as `/visit` fall back to
-  `index.html`.
+`useDocumentTitle` sets the title, description, canonical URL, robots directive
+and Open Graph tags per route. Absolute URLs are built from the live origin, so
+they are correct on whatever domain the site is served from — nothing to
+configure. `StructuredData` adds `Restaurant` JSON-LD (address, coordinates,
+the nine cuisines, reservations) the same way. The 404 route sets
+`noindex, follow`.
+
+`sitemap.xml` and `robots.txt` are generated from the router's own route list
+in `src/data/routes.js`, which is what stops them drifting. **The production
+domain is the one constant to change** — `PRODUCTION_ORIGIN` in that file
+currently reads `https://hillsedgeberagala.com`.
+
+## Deploying
+
+The build is a static bundle in `dist/`, but routing is client-side, so the
+host must fall every path back to `index.html`:
+
+- **Netlify** — `public/_redirects` is already in place.
+- **Vercel** — `vercel.json` is already in place.
+- **nginx** — `try_files $uri $uri/ /index.html;`
+- **Apache** — a `mod_rewrite` fallback to `/index.html`.
+
+Without that rewrite the site works from the home page but deep links such as
+`/visit` return 404 on a hard refresh.
+
+## Notes
 - The reservation form composes a WhatsApp message and hands it to the guest —
   nothing is transmitted until they press send inside WhatsApp. Swap
   `ReservationForm`'s submit handler for a backend call if that changes.

@@ -1,4 +1,5 @@
 import { images } from './images';
+import { navLinks } from './routes';
 
 export const site = {
   name: 'Hillsedge Beragala',
@@ -14,15 +15,8 @@ export const site = {
   mapEmbedUrl: 'https://maps.google.com/maps?q=6.7630768,80.9053593&z=15&output=embed',
 };
 
-/** Single source of truth for the header, the mobile sheet and the footer. */
-export const navLinks = [
-  { to: '/', label: 'Home', sheetLabel: 'Home', index: '01' },
-  { to: '/about', label: 'About', sheetLabel: 'About', index: '02' },
-  { to: '/smokehouse', label: 'Smokehouse', sheetLabel: 'Smokehouse', index: '03' },
-  { to: '/cuisine', label: 'Cuisine', sheetLabel: 'Cuisine', index: '04' },
-  { to: '/gallery', label: 'Gallery', sheetLabel: 'Gallery', index: '05' },
-  { to: '/visit', label: 'Visit', sheetLabel: 'Visit & Reserve', index: '06' },
-];
+/** Re-exported so components keep importing navigation from one module. */
+export { navLinks };
 
 export const footerColumns = [
   {

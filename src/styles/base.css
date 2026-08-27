@@ -144,3 +144,35 @@ p {
     animation-iteration-count: 1 !important;
   }
 }
+
+/* Keyboard users land here first; it stays out of the way until focused. */
+.skip-link {
+  position: fixed;
+  top: calc(10px + var(--safe-t));
+  left: 50%;
+  z-index: 300;
+  transform: translate(-50%, calc(-100% - 20px));
+  background: var(--ember);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 14px 22px;
+  border-radius: 999px;
+  transition: transform 0.25s var(--ez);
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  transform: translate(-50%, 0);
+}
+
+#main:focus {
+  outline: none;
+}
+
+/* Reserves height while a lazily-loaded route chunk arrives. */
+.route-loading {
+  min-height: 100svh;
+}
