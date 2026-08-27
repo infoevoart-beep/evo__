@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useBodyScrollLock } from '../hooks/useBodyScrollLock';
+import { Picture } from './Picture';
 
 export function Lightbox({ photo, onClose }) {
   useBodyScrollLock(Boolean(photo));
@@ -26,7 +27,7 @@ export function Lightbox({ photo, onClose }) {
       <button type="button" className="x" aria-label="Close" onClick={onClose}>
         ×
       </button>
-      <img src={photo.src} alt={photo.alt} />
+      <Picture photo={photo} priority sizes="min(1200px, 94vw)" />
     </div>
   );
 }

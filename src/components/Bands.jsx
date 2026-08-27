@@ -1,5 +1,6 @@
 import { Reveal } from './Reveal';
 import { Button } from './Button';
+import { Picture } from './Picture';
 
 /** Centred "short version" statement, optionally with the hairline rule. */
 export function StatementBand({ label, title, rule = true, children, className = '' }) {
@@ -40,7 +41,7 @@ export function ClosingBand({ label, title, actions = [] }) {
 export function PhotoCta({ photo, label, title, actions = [] }) {
   return (
     <section className="cta">
-      <img loading="lazy" src={photo.src} alt={photo.alt} />
+      <Picture photo={photo} sizes="100vw" />
       <Reveal className="cta-in" motion="flat">
         <span className="lab">{label}</span>
         <h2>{title}</h2>

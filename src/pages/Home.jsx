@@ -9,6 +9,7 @@ import { MapPanel, FactList } from '../components/MapPanel';
 import { Reveal } from '../components/Reveal';
 import { Button } from '../components/Button';
 import { PillarIcon } from '../components/PillarIcon';
+import { Picture } from '../components/Picture';
 
 export default function Home() {
   useDocumentTitle(
@@ -87,7 +88,7 @@ export default function Home() {
           </SectionHead>
 
           <Reveal as="figure" className="sh-photo" motion="up">
-            <img loading="lazy" src={photos.smoker.src} alt={photos.smoker.alt} />
+            <Picture photo={photos.smoker} sizes="(max-width: 1280px) 100vw, 1200px" />
             <figcaption>The Hillsedge smoker — hardwood-fed, hand-built, always working</figcaption>
           </Reveal>
 
@@ -152,7 +153,7 @@ export default function Home() {
           <Reveal className="mos trio" motion="up">
             {homeGalleryKeys.map((key) => (
               <figure key={key}>
-                <img loading="lazy" src={photos[key].src} alt={photos[key].alt} />
+                <Picture photo={photos[key]} sizes="(max-width: 720px) 100vw, (max-width: 1100px) 50vw, 33vw" />
                 <figcaption>{photos[key].caption}</figcaption>
               </figure>
             ))}

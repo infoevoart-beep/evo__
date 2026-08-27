@@ -38,7 +38,7 @@
   min-height: min(58svh, 540px);
 }
 
-.frame > img {
+.frame img {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -1289,7 +1289,7 @@
   background: #000;
 }
 
-.cta > img {
+.cta img {
   position: absolute;
   inset: 0;
   width: 100%;

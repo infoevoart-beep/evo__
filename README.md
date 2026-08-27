@@ -10,7 +10,12 @@ npm install
 npm run dev      # development server
 npm run build    # production bundle in dist/
 npm run preview  # serve the production bundle locally
+npm run images   # regenerate the responsive image variants
 ```
+
+`dev` and `build` run `images` first, so the responsive variants are always in
+step with the source photographs. The variants themselves are derived and
+gitignored — only the full-size originals in `src/assets/images` are tracked.
 
 ## What this is
 
@@ -43,6 +48,25 @@ src/
   pages/             Home, About, Smokehouse, Cuisine, Gallery, Visit, NotFound
   styles/            tokens, base, components, sections, motion, responsive
 ```
+
+## Images
+
+`scripts/generate-images.mjs` derives a WebP ladder (480 / 960 / 1440 px, never
+upscaled) from each photograph in `src/assets/images`. Where WebP does not beat
+an already well-compressed JPEG at full width, the script steps the quality down
+until it does, so no variant is ever heavier than the source it replaces.
+
+`<Picture>` emits that ladder as a `<source srcset>` with the JPEG as the
+fallback, and always sets intrinsic `width`/`height` so the layout does not jump
+as images load. Each caller passes a `sizes` describing how wide the image
+actually renders.
+
+The effect on the gallery — the heaviest page — measured against the built
+bundle:
+
+| | Before | After |
+| --- | --- | --- |
+| 13 photographs, 390 px viewport | 1.93 MB | 407 KB |
 
 ## Mobile
 

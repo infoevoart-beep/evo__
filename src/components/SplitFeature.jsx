@@ -1,4 +1,5 @@
 import { Reveal } from './Reveal';
+import { Picture } from './Picture';
 
 /**
  * Image on one side, text on the other. Used five times across the site;
@@ -18,11 +19,10 @@ export function SplitFeature({
 }) {
   const media = (
     <Reveal as="figure" className="sp-media" motion={reverse ? 'right' : 'left'}>
-      <img
-        loading="lazy"
+      <Picture
+        photo={photo}
         style={portrait ? { aspectRatio: '3 / 4' } : undefined}
-        src={photo.src}
-        alt={photo.alt}
+        sizes="(max-width: 900px) 100vw, 50vw"
       />
       <figcaption>{photo.caption}</figcaption>
     </Reveal>

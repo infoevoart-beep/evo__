@@ -1,5 +1,6 @@
 import { useParallax } from '../hooks/useParallax';
 import { Button } from './Button';
+import { Picture } from './Picture';
 
 /**
  * The hero at the top of every page. The home page uses the tall variant
@@ -26,12 +27,12 @@ export function PageHero({
     <section className={`hero ${short ? 'short' : ''}`.trim()} id={id}>
       <div className="stage">
         <figure className="frame">
-          <img
-            ref={short ? imgRef : null}
+          <Picture
+            photo={photo}
+            priority
+            imgRef={short ? imgRef : null}
             className={short ? 'par-img' : undefined}
-            src={photo.src}
-            alt={photo.alt}
-            fetchPriority="high"
+            sizes="100vw"
           />
           <div className="veil" aria-hidden="true" />
           <div className="copy">

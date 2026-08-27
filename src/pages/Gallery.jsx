@@ -6,6 +6,7 @@ import { SectionHead } from '../components/SectionHead';
 import { ClosingBand } from '../components/Bands';
 import { Lightbox } from '../components/Lightbox';
 import { Reveal } from '../components/Reveal';
+import { Picture } from '../components/Picture';
 
 export default function Gallery() {
   useDocumentTitle(
@@ -66,7 +67,10 @@ export default function Gallery() {
                   onClick={() => setLightbox(photo)}
                   aria-label={`Open “${photo.caption}” full size`}
                 >
-                  <img loading="lazy" src={photo.src} alt={photo.alt} />
+                  <Picture
+                    photo={photo}
+                    sizes="(max-width: 720px) 100vw, (max-width: 1100px) 50vw, 33vw"
+                  />
                   <figcaption>{photo.caption}</figcaption>
                 </button>
               </Reveal>
