@@ -9,8 +9,12 @@ export function BrandMarkSprite() {
     <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden="true" focusable="false">
       <defs>
         <g id="hsArt">
-          {brandMarkPaths.map((d) => (
-            <path key={d} fillRule="nonzero" fill="currentColor" d={d} />
+          {/* Keyed by index, not by `d`: the artwork repeats one path
+              verbatim, and keying on the data made React drop it. The list is
+              static and never reorders, so the index is a stable identity. */}
+          {brandMarkPaths.map((d, index) => (
+            // eslint-disable-next-line react/no-array-index-key
+            <path key={index} fillRule="nonzero" fill="currentColor" d={d} />
           ))}
         </g>
       </defs>
