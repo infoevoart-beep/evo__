@@ -42,7 +42,12 @@ export default function Gallery() {
                 aria-selected={filter === id}
                 className={`chip ${filter === id ? 'on' : ''}`.trim()}
                 key={id}
-                onClick={() => setFilter(id)}
+                onClick={() => {
+                  setFilter(id);
+                  // The viewer addresses photos by position in the filtered
+                  // wall, so a filter change would otherwise strand it.
+                  setLightbox(null);
+                }}
               >
                 {label}
               </button>
@@ -64,7 +69,7 @@ export default function Gallery() {
                 <button
                   type="button"
                   className="gwall-btn"
-                  onClick={() => setLightbox(photo)}
+                  onClick={() => setLightbox(index)}
                   aria-label={`Open “${photo.caption}” full size`}
                 >
                   <Picture
@@ -88,7 +93,12 @@ export default function Gallery() {
         ]}
       />
 
-      <Lightbox photo={lightbox} onClose={() => setLightbox(null)} />
+      <Lightbox
+        photos={visible}
+        index={lightbox}
+        onNavigate={setLightbox}
+        onClose={() => setLightbox(null)}
+      />
     </>
   );
 }

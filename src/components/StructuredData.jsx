@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { site } from '../data/site';
+import { shareImage, site } from '../data/site';
 import { cuisines } from '../data/content';
 
 /**
@@ -18,6 +18,7 @@ export function StructuredData() {
       name: site.name,
       description: site.tagline,
       url: origin,
+      image: new URL(shareImage.src, origin).href,
       telephone: site.phone.href.replace('tel:', ''),
       email: site.email,
       servesCuisine: cuisines.map((c) => c.title),
@@ -30,7 +31,14 @@ export function StructuredData() {
       },
       geo: { '@type': 'GeoCoordinates', latitude: 6.7630768, longitude: 80.9053593 },
       hasMap: site.mapsUrl,
-      openingHoursSpecification: {
+      acceptsReservations: true,
+    };
+
+    // Search engines ignore an hours block with no times on it, so it is only
+    // published once both ends are configured in src/data/site.js.
+    const { opens, closes } = site.serviceHours;
+    if (opens && closes) {
+      data.openingHoursSpecification = {
         '@type': 'OpeningHoursSpecification',
         dayOfWeek: [
           'Monday',
@@ -41,9 +49,10 @@ export function StructuredData() {
           'Saturday',
           'Sunday',
         ],
-      },
-      acceptsReservations: true,
-    };
+        opens,
+        closes,
+      };
+    }
 
     const script = document.createElement('script');
     script.type = 'application/ld+json';

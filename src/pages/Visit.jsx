@@ -1,4 +1,4 @@
-import { photos, site } from '../data/site';
+import { photos, site, socialLinks } from '../data/site';
 import { visitFacts, routes, reservePoints, faqs } from '../data/content';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import { PageHero } from '../components/PageHero';
@@ -116,8 +116,12 @@ export default function Visit() {
             </div>
             <div className="cbox">
               <div className="k">Find us online</div>
-              <a href="#">Instagram</a>
-              <a href="#">Facebook</a>
+              {socialLinks.map(({ label, href }) => (
+                <a key={label} href={href} target="_blank" rel="noopener noreferrer">
+                  {label}
+                </a>
+              ))}
+              <span className="cbox-note">Message us for the quickest reply</span>
             </div>
           </Reveal>
         </div>

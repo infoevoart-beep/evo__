@@ -235,6 +235,26 @@
   .fb {
     justify-content: flex-start;
   }
+
+  /* Too little width to sit the arrows beside the photo without covering
+     it, so they drop to a row along the bottom. */
+  .lb-nav {
+    top: auto;
+    bottom: calc(18px + var(--safe-b));
+    transform: none;
+  }
+
+  .lb-prev {
+    left: calc(50% - var(--tap) - 8px);
+  }
+
+  .lb-next {
+    right: calc(50% - var(--tap) - 8px);
+  }
+
+  .lbox img {
+    max-height: 64svh;
+  }
 }
 
 /* Landscape phones: the tall hero would otherwise fill more than the screen. */

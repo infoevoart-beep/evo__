@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import userEvent from '@testing-library/user-event';
-import { screen } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import { renderWithRouter } from '../test/render';
 import Gallery from './Gallery';
 import { photos } from '../data/site';
-import { galleryFilters } from '../data/content';
+import { galleryFilters, galleryOrder } from '../data/content';
 
 const photoButtons = () => screen.getAllByRole('button', { name: /^Open “/ });
 
@@ -83,5 +83,112 @@ describe('Gallery', () => {
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     expect(document.body).not.toHaveStyle({ overflow: 'hidden' });
+  });
+
+  it('opens the photograph that was actually clicked', async () => {
+    const user = userEvent.setup();
+    renderWithRouter(<Gallery />);
+
+    const third = galleryOrder[2];
+    await user.click(photoButtons()[2]);
+
+    const dialog = screen.getByRole('dialog');
+    expect(within(dialog).getByAltText(photos[third].alt)).toBeInTheDocument();
+  });
+
+  it('steps through the wall with the arrow keys, wrapping at both ends', async () => {
+    const user = userEvent.setup();
+    renderWithRouter(<Gallery />);
+
+    const order = galleryOrder.map((key) => photos[key]);
+    await user.click(photoButtons()[0]);
+    const dialog = () => screen.getByRole('dialog');
+
+    await user.keyboard('{ArrowRight}');
+    expect(within(dialog()).getByAltText(order[1].alt)).toBeInTheDocument();
+
+    await user.keyboard('{ArrowLeft}');
+    expect(within(dialog()).getByAltText(order[0].alt)).toBeInTheDocument();
+
+    // Back past the first photo lands on the last one rather than dead-ending.
+    await user.keyboard('{ArrowLeft}');
+    expect(within(dialog()).getByAltText(order.at(-1).alt)).toBeInTheDocument();
+
+    await user.keyboard('{ArrowRight}');
+    expect(within(dialog()).getByAltText(order[0].alt)).toBeInTheDocument();
+  });
+
+  it('steps through the wall with the on-screen arrows', async () => {
+    const user = userEvent.setup();
+    renderWithRouter(<Gallery />);
+
+    const order = galleryOrder.map((key) => photos[key]);
+    await user.click(photoButtons()[0]);
+
+    await user.click(screen.getByRole('button', { name: 'Next photo' }));
+    expect(within(screen.getByRole('dialog')).getByAltText(order[1].alt)).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Previous photo' }));
+    expect(within(screen.getByRole('dialog')).getByAltText(order[0].alt)).toBeInTheDocument();
+  });
+
+  it('stays open when the photograph itself is clicked', async () => {
+    const user = userEvent.setup();
+    renderWithRouter(<Gallery />);
+
+    await user.click(photoButtons()[0]);
+    await user.click(within(screen.getByRole('dialog')).getByAltText(photos[galleryOrder[0]].alt));
+
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+  });
+
+  it('closes when the backdrop around the photograph is clicked', async () => {
+    const user = userEvent.setup();
+    renderWithRouter(<Gallery />);
+
+    await user.click(photoButtons()[0]);
+    await user.click(screen.getByRole('dialog'));
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('returns focus to the thumbnail it was opened from', async () => {
+    const user = userEvent.setup();
+    renderWithRouter(<Gallery />);
+
+    const opener = photoButtons()[1];
+    await user.click(opener);
+    expect(opener).not.toHaveFocus();
+
+    await user.keyboard('{Escape}');
+
+    expect(opener).toHaveFocus();
+  });
+
+  it('navigates within the filtered wall, not the whole set', async () => {
+    const user = userEvent.setup();
+    renderWithRouter(<Gallery />);
+
+    await user.click(screen.getByRole('tab', { name: 'The Table' }));
+    const shown = galleryOrder
+      .map((key) => photos[key])
+      .filter((photo) => photo.category === 'table');
+
+    await user.click(photoButtons()[0]);
+    await user.keyboard('{ArrowRight}');
+
+    expect(within(screen.getByRole('dialog')).getByAltText(shown[1].alt)).toBeInTheDocument();
+  });
+
+  it('closes the viewer when the filter changes beneath it', async () => {
+    const user = userEvent.setup();
+    renderWithRouter(<Gallery />);
+
+    await user.click(photoButtons()[0]);
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+
+    await user.click(screen.getByRole('tab', { name: 'The Smokehouse' }));
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 });

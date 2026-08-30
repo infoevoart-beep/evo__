@@ -13,6 +13,14 @@ export const site = {
   address: 'Bathgoda, Kalupahana Waththa,\nHaldummulla 90180',
   mapsUrl: 'https://maps.app.goo.gl/22pMrv7L8VWsPGweA',
   mapEmbedUrl: 'https://maps.google.com/maps?q=6.7630768,80.9053593&z=15&output=embed',
+
+  /*
+   * Service times as 24-hour `HH:MM`, used for the Restaurant structured
+   * data. Both must be filled in for search engines to show opening hours —
+   * while either is null the block is left out altogether, which is better
+   * than publishing times that turn out to be wrong.
+   */
+  serviceHours: { opens: null, closes: null },
 };
 
 /** Re-exported so components keep importing navigation from one module. */
@@ -42,11 +50,24 @@ export const footerColumns = [
   },
 ];
 
+/**
+ * Social profiles. Set a URL here to make the icon appear anywhere social
+ * links are rendered; leave it `null` and that profile is omitted rather
+ * than rendered as a link that goes nowhere.
+ */
+export const socialProfiles = {
+  instagram: null,
+  facebook: null,
+  whatsapp: `https://wa.me/${site.whatsapp}`,
+};
+
 export const socialLinks = [
-  { label: 'Instagram', href: '#', icon: 'instagram' },
-  { label: 'Facebook', href: '#', icon: 'facebook' },
-  { label: 'WhatsApp', href: `https://wa.me/${site.whatsapp}`, icon: 'whatsapp' },
-];
+  { label: 'Instagram', icon: 'instagram' },
+  { label: 'Facebook', icon: 'facebook' },
+  { label: 'WhatsApp', icon: 'whatsapp' },
+]
+  .map((link) => ({ ...link, href: socialProfiles[link.icon] }))
+  .filter((link) => Boolean(link.href));
 
 /**
  * Every photograph used anywhere on the site, with its caption and gallery
@@ -132,6 +153,15 @@ export const photos = {
     caption: "You'll know it when you see it",
     category: 'views',
   },
+};
+
+/**
+ * The image social platforms show when a link to the site is shared. Any
+ * photograph works; this one reads clearly at card size.
+ */
+export const shareImage = {
+  src: photos.sunsetValley.src,
+  alt: photos.sunsetValley.alt,
 };
 
 export default site;

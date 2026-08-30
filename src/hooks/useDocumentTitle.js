@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { site } from '../data/site';
+import { shareImage, site } from '../data/site';
 
 const DEFAULT_TITLE = `${site.name} — Mountain Smokehouse & Dining Experience`;
 
@@ -37,6 +37,15 @@ export function useDocumentTitle(title, description, { noindex = false } = {}) {
     setMeta('meta[property="og:url"]', { property: 'og:url', content: url });
     setMeta('meta[property="og:type"]', { property: 'og:type', content: 'website' });
     setMeta('meta[name="twitter:card"]', { name: 'twitter:card', content: 'summary_large_image' });
+
+    // Bundled asset URLs are root-relative; the crawlers want them absolute.
+    const image = new URL(shareImage.src, window.location.origin).href;
+    setMeta('meta[property="og:image"]', { property: 'og:image', content: image });
+    setMeta('meta[property="og:image:alt"]', {
+      property: 'og:image:alt',
+      content: shareImage.alt,
+    });
+    setMeta('meta[name="twitter:image"]', { name: 'twitter:image', content: image });
 
     if (description) {
       setMeta('meta[name="description"]', { name: 'description', content: description });

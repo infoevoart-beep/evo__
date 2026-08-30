@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { photos, navLinks, footerColumns, site } from './site';
+import { photos, navLinks, footerColumns, shareImage, site, socialLinks } from './site';
 import { images } from './images';
 import { galleryOrder, homeGalleryKeys, cuisines, faqs, routes } from './content';
 
@@ -76,6 +76,36 @@ describe('navigation', () => {
   });
 });
 
+describe('outbound links', () => {
+  it('renders no social icon that goes nowhere', () => {
+    for (const link of socialLinks) {
+      expect(link.href, link.label).toMatch(/^https:\/\//);
+    }
+  });
+
+  it('leaves out unconfigured profiles rather than linking to nothing', () => {
+    const labels = socialLinks.map((link) => link.label);
+    expect(new Set(labels).size).toBe(labels.length);
+    // WhatsApp is derived from the phone number, so it is always present.
+    expect(labels).toContain('WhatsApp');
+  });
+
+  it('never points a footer link at a placeholder href', () => {
+    for (const column of footerColumns) {
+      for (const link of column.links) {
+        if (link.href) expect(link.href, link.label).not.toBe('#');
+      }
+    }
+  });
+});
+
+describe('social sharing', () => {
+  it('has a real image with alt text for link previews', () => {
+    expect(shareImage.src).toBeTruthy();
+    expect(shareImage.alt).toMatch(/\S/);
+  });
+});
+
 describe('site details', () => {
   it('uses one telephone number everywhere', () => {
     expect(site.phone.href).toBe('tel:+94742373394');
@@ -86,5 +116,13 @@ describe('site details', () => {
     expect(cuisines).toHaveLength(9);
     expect(faqs.length).toBeGreaterThan(0);
     expect(routes).toHaveLength(3);
+  });
+
+  it('states service hours as a pair, or not at all', () => {
+    const { opens, closes } = site.serviceHours;
+    expect(Boolean(opens)).toBe(Boolean(closes));
+    for (const time of [opens, closes]) {
+      if (time) expect(time).toMatch(/^\d{2}:\d{2}$/);
+    }
   });
 });

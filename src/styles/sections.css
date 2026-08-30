@@ -939,7 +939,8 @@
 
 .lbox img {
   max-width: min(1200px, 94vw);
-  max-height: 84svh;
+  /* Leaves room for the caption strip beneath the photo. */
+  max-height: 76svh;
   width: auto;
   border-radius: 6px;
   animation: pop 0.5s var(--ez);
@@ -969,6 +970,69 @@
   display: grid;
   place-items: center;
   background: rgba(0, 0, 0, 0.35);
+}
+
+.lbox .x:focus-visible,
+.lb-nav:focus-visible {
+  outline: 2px solid var(--glow);
+  outline-offset: 3px;
+}
+
+/* The photo and its caption: the one part of the overlay that does not
+   close on click, so it gets the default cursor back. */
+.lb-figure {
+  margin: 0;
+  cursor: default;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.lb-figure figcaption {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(247, 243, 236, 0.72);
+}
+
+.lb-count {
+  color: var(--glow);
+}
+
+.lb-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: var(--tap);
+  height: var(--tap);
+  border-radius: 999px;
+  border: 1px solid var(--hair);
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--bone);
+  font-size: 26px;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background 0.3s, border-color 0.3s;
+}
+
+.lb-nav:hover {
+  background: rgba(0, 0, 0, 0.6);
+  border-color: var(--glow);
+}
+
+.lb-prev {
+  left: calc(16px + var(--safe-l));
+}
+
+.lb-next {
+  right: calc(16px + var(--safe-r));
 }
 
 /* ===== VISIT ===== */
@@ -1170,6 +1234,19 @@
 .field select option {
   background: var(--ink);
   color: var(--bone);
+}
+
+.field-error {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--glow);
+}
+
+.field input[aria-invalid='true'],
+.field select[aria-invalid='true'],
+.field textarea[aria-invalid='true'] {
+  border-color: var(--ember);
 }
 
 .form-submit {
