@@ -257,6 +257,21 @@
   }
 }
 
+/*
+ * Very narrow screens (the Galaxy Fold's 280px outer display, and similar).
+ * A `.btn` is a nowrap pill with 30px of side padding, so a long label such as
+ * "View the full gallery" measured wider than the viewport and pushed the
+ * whole page sideways. Allowing the label to wrap costs nothing at widths
+ * where it already fits — it only breaks when it genuinely cannot.
+ */
+@media (max-width: 400px) {
+  .btn {
+    white-space: normal;
+    text-align: center;
+    padding-inline: 22px;
+  }
+}
+
 /* Landscape phones: the tall hero would otherwise fill more than the screen. */
 @media (max-height: 520px) and (orientation: landscape) {
   .hero {

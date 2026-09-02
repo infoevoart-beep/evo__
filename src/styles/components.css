@@ -327,6 +327,14 @@ footer {
   border-bottom: 1px solid var(--hair);
 }
 
+/*
+ * The link around the mark is inline by default, so its box collapsed to the
+ * line height and left a 19px tap target sitting over a 74px logo.
+ */
+.ft-brand a {
+  display: inline-block;
+}
+
 .ft-brand .mark {
   height: 74px;
   color: var(--bone);
