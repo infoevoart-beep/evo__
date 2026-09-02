@@ -14,6 +14,8 @@ import manifest from '../assets/images/generated/manifest.json';
  * @property {number} width   intrinsic width, so the browser can reserve space
  * @property {number} height  intrinsic height
  * @property {string} srcSet  the WebP ladder, ready for `<source srcset>`
+ * @property {string} avifSrcSet  the AVIF ladder, or '' where AVIF never won
+ * @property {string} lqip    a 20px blurred data URI, shown until the real file arrives
  */
 
 const originals = import.meta.glob('../assets/images/*.{jpg,jpeg,png}', {
@@ -28,17 +30,37 @@ const webp = import.meta.glob('../assets/images/generated/*.webp', {
   import: 'default',
 });
 
+/*
+ * Sparse by design: the image script writes an AVIF only where it beat the
+ * WebP at equal quality, so a photograph may have AVIF at some widths and
+ * none at others.
+ */
+const avif = import.meta.glob('../assets/images/generated/*.avif', {
+  eager: true,
+  query: '?url',
+  import: 'default',
+});
+
 const basename = (filePath) => filePath.slice(filePath.lastIndexOf('/') + 1);
 const camelCase = (name) => name.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
 
 /** `after-dark-480.webp` → grouped under `after-dark` at width 480. */
-const ladders = {};
-for (const [filePath, url] of Object.entries(webp)) {
-  const match = basename(filePath).match(/^(.+)-(\d+)\.webp$/);
-  if (!match) continue;
-  (ladders[match[1]] ??= []).push({ width: Number(match[2]), url });
-}
-for (const ladder of Object.values(ladders)) ladder.sort((a, b) => a.width - b.width);
+const group = (entries, extension) => {
+  const ladders = {};
+  for (const [filePath, url] of Object.entries(entries)) {
+    const match = basename(filePath).match(new RegExp(`^(.+)-(\\d+)\\.${extension}$`));
+    if (!match) continue;
+    (ladders[match[1]] ??= []).push({ width: Number(match[2]), url });
+  }
+  for (const ladder of Object.values(ladders)) ladder.sort((a, b) => a.width - b.width);
+  return ladders;
+};
+
+const ladders = group(webp, 'webp');
+const avifLadders = group(avif, 'avif');
+
+const toSrcSet = (ladder) =>
+  (ladder ?? []).map(({ url, width }) => `${url} ${width}w`).join(', ');
 
 /** @type {Record<string, ImageAsset>} */
 export const images = {};
@@ -51,7 +73,9 @@ for (const [filePath, url] of Object.entries(originals)) {
     src: url,
     width: meta.width,
     height: meta.height,
-    srcSet: (ladders[name] ?? []).map(({ url: u, width }) => `${u} ${width}w`).join(', '),
+    srcSet: toSrcSet(ladders[name]),
+    avifSrcSet: toSrcSet(avifLadders[name]),
+    lqip: meta.lqip,
   };
 }
 
