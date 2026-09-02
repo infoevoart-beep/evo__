@@ -1,6 +1,7 @@
 import { Suspense, lazy } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import { BrandMarkSprite } from './components/BrandMark';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { ScrollToTop } from './components/ScrollToTop';
@@ -20,6 +21,10 @@ const Visit = lazy(() => import('./pages/Visit'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
 export default function App() {
+  // Keying the boundary on the path clears a caught error as soon as the
+  // guest navigates, so one bad route does not wedge the whole session.
+  const { pathname } = useLocation();
+
   return (
     <>
       <BrandMarkSprite />
@@ -32,17 +37,19 @@ export default function App() {
       <main id="main" tabIndex={-1}>
         {/* Holds the viewport open while a route chunk loads, so the header
             does not jump against an empty page. */}
-        <Suspense fallback={<div className="route-loading" aria-hidden="true" />}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/smokehouse" element={<Smokehouse />} />
-            <Route path="/cuisine" element={<Cuisine />} />
-            <Route path="/gallery" element={<Gallery />} />
-            <Route path="/visit" element={<Visit />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Suspense>
+        <ErrorBoundary key={pathname}>
+          <Suspense fallback={<div className="route-loading" aria-hidden="true" />}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/smokehouse" element={<Smokehouse />} />
+              <Route path="/cuisine" element={<Cuisine />} />
+              <Route path="/gallery" element={<Gallery />} />
+              <Route path="/visit" element={<Visit />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
+        </ErrorBoundary>
       </main>
       <Footer />
     </>
