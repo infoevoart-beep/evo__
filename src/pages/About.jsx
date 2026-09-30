@@ -9,8 +9,9 @@ import { Reveal } from '../components/Reveal';
 
 export default function About() {
   useDocumentTitle(
-    'About',
-    "On the Beragala–Haputale hill road: how Hillsedge is built, and how the smokehouse, the setting and nine kitchens fit together."
+    'About — Mountain Dining Destination, Beragala',
+    'A dining destination on the Beragala–Haputale hill road in Sri Lanka\'s tea country. How the smokehouse, the setting and nine kitchens fit together.',
+    { brandSuffix: false }
   );
 
   return (

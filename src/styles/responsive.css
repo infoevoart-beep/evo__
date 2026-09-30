@@ -81,6 +81,7 @@
   .cui-grid,
   .routes,
   .contact-grid,
+  .nearby,
   .form {
     grid-template-columns: 1fr;
   }

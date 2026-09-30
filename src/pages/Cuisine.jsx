@@ -10,8 +10,9 @@ import { Button } from '../components/Button';
 
 export default function Cuisine() {
   useDocumentTitle(
-    'Cuisine',
-    'Nine kitchens under one thatched roof — Sri Lankan heritage cooking, slow-smoked meats, continental grills and more.'
+    'Menu — Sri Lankan, BBQ, Italian, Indian & Continental',
+    'Nine kitchens: Sri Lankan rice and curry, slow-smoked BBQ, Italian, Indian tandoori, Chinese and continental grills, plus vegetarian and vegan throughout.',
+    { brandSuffix: false }
   );
 
   return (
@@ -57,8 +58,10 @@ export default function Cuisine() {
       <section className="sec cui scene" id="menu">
         <div className="wrap">
           <SectionHead layout="cui-head" label="The Full Range" title="Kitchen by kitchen.">
-            Nine kitchens under one thatched roof, so a family, a couple, a tour group and a
-            food-focused traveller can all eat well together.
+            Nine kitchens under one thatched roof — Sri Lankan rice and curry, slow-smoked
+            barbecue, Italian, Indian tandoori, Chinese and continental grills — so a family, a
+            couple, a tour group and a food-focused traveller can all eat well together.
+            Vegetarian and vegan dishes run across the menu, not just one corner of it.
           </SectionHead>
 
           <Reveal className="menu-list" motion="up">

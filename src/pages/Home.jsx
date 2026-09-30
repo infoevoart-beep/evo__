@@ -14,7 +14,7 @@ import { Picture } from '../components/Picture';
 export default function Home() {
   useDocumentTitle(
     null,
-    'A mountain smokehouse and dining destination in Beragala, Sri Lanka. Slow smoke, handcrafted flavour and hill-country views.'
+    'A mountain smokehouse and BBQ restaurant in Beragala, on the hill road between Ella and Haputale. Slow-smoked meats, nine kitchens and views over the valley.'
   );
 
   return (

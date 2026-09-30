@@ -10,8 +10,9 @@ import { Picture } from '../components/Picture';
 
 export default function Gallery() {
   useDocumentTitle(
-    'Gallery',
-    'The lodge, the smoker, the table and the light over the valley — photographs from Hillsedge Beragala.'
+    'Gallery — A Restaurant With A View, Haputale Road',
+    'The lodge, the smoker, the table and the light over the valley — photographs of Hillsedge Beragala on the Beragala–Haputale hill road.',
+    { brandSuffix: false }
   );
 
   const [filter, setFilter] = useState('all');
@@ -29,7 +30,12 @@ export default function Gallery() {
     <>
       <section className="sec gal scene gal-top" id="top">
         <div className="wrap">
-          <SectionHead layout="gal-head" label="Gallery" title="See it, smell it, stay a while.">
+          <SectionHead
+            as="h1"
+            layout="gal-head"
+            label="Gallery"
+            title="See it, smell it, stay a while."
+          >
             The lodge, the smoker, the table and the light over the valley — the drive up included.
             Tap any photo to open it full size.
           </SectionHead>

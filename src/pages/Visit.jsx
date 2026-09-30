@@ -1,5 +1,5 @@
 import { photos, site, socialLinks } from '../data/site';
-import { visitFacts, routes, reservePoints, faqs } from '../data/content';
+import { visitFacts, routes, reservePoints, faqs, nearbyLandmarks } from '../data/content';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import { PageHero } from '../components/PageHero';
 import { SectionHead } from '../components/SectionHead';
@@ -11,8 +11,9 @@ import { Button } from '../components/Button';
 
 export default function Visit() {
   useDocumentTitle(
-    'Visit & Reserve',
-    'Find Hillsedge Beragala on the Beragala–Haputale hill road. Directions, opening hours and table reservations.'
+    'Restaurant near Diyaluma Falls & Haputale — Hillsedge',
+    'Where to eat between Ella and Haputale — on the A4 at Beragala, about 21 km from Diyaluma Falls. Directions, hours, coach parking and table reservations.',
+    { brandSuffix: false }
   );
 
   return (
@@ -69,6 +70,34 @@ export default function Visit() {
                 <h3>{title}</h3>
                 <p>{text}</p>
                 <div className="d">{duration}</div>
+              </div>
+            ))}
+          </Reveal>
+        </div>
+      </section>
+
+      <section className="sec cui scene" id="nearby">
+        <div className="wrap">
+          <SectionHead
+            layout="cui-head"
+            label="What's Nearby"
+            title="The waterfalls, the viewpoints, and us in the middle."
+          >
+            Beragala sits between most of the hill country&apos;s best-known stops. Distances are by
+            road and the times allow for mountain driving — nothing here is as quick as the
+            kilometres suggest.
+          </SectionHead>
+
+          <Reveal className="nearby" motion="up">
+            {nearbyLandmarks.map(({ name, also, distance, time, text }) => (
+              <div className="near" key={name}>
+                <h3>{name}</h3>
+                {also && <div className="near-also">{also}</div>}
+                <p>{text}</p>
+                <div className="near-meta">
+                  <span>{distance}</span>
+                  <span>{time}</span>
+                </div>
               </div>
             ))}
           </Reveal>

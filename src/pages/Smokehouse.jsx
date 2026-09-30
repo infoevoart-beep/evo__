@@ -10,8 +10,9 @@ import { Button } from '../components/Button';
 
 export default function Smokehouse() {
   useDocumentTitle(
-    'Smokehouse',
-    'Hardwood, hours and charcoal. Inside the hand-built smokers that give Hillsedge Beragala its name.'
+    "Smokehouse — Slow-Smoked BBQ in Sri Lanka's Hill Country",
+    "Sri Lanka's mountain smokehouse: hardwood, hours and charcoal in hand-built offset smokers, 1,000 m above the sea at Beragala, between Ella and Haputale.",
+    { brandSuffix: false }
   );
 
   return (
@@ -27,7 +28,7 @@ export default function Smokehouse() {
             <em>the signature.</em>
           </>
         }
-        intro="Hand-built, hardwood-fed and always working. Not equipment hidden in a kitchen — the reason the place is called what it is."
+        intro="Sri Lanka's mountain smokehouse: hand-built offset smokers, hardwood-fed and always working. Not equipment hidden in a kitchen — the reason the place is called what it is."
         metaLeft="Hardwood · Charcoal · Patience"
         metaRight="Low and slow, every day"
         scrollTo="#process"
@@ -56,7 +57,9 @@ export default function Smokehouse() {
             }
           >
             Four stages, none of them hurried. The smokehouse sets the pace for the entire kitchen,
-            and everything else on the menu is timed around it.
+            and everything else on the menu is timed around it. Slow-smoked barbecue is still rare
+            in Sri Lanka and rarer still in the hill country — this is the only one we know of at
+            1,000 m.
           </SectionHead>
 
           <Reveal className="steps" motion="up">

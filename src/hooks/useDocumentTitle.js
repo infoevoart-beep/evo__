@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { shareImage, site } from '../data/site';
 
-const DEFAULT_TITLE = `${site.name} — Mountain Smokehouse & Dining Experience`;
+const DEFAULT_TITLE = `${site.name} — Mountain Smokehouse & BBQ, Haputale`;
 
 /** Creates the tag if it is missing, then sets it. */
 function setMeta(selector, attributes) {
@@ -19,12 +19,23 @@ function setMeta(selector, attributes) {
  * Keeps the tab title, description, canonical URL, robots directive and Open
  * Graph tags in step with the route. Absolute URLs come from the live origin,
  * so they are correct on whatever domain the site is served from.
+ *
+ * `brandSuffix: false` hands the whole title to the page. Search engines cut
+ * a title around sixty characters, and " — Hillsedge Beragala" eats a third of
+ * that, which leaves no room to say where we are or what we cook. Pages that
+ * have a title worth spending the space on opt out and carry the brand name
+ * themselves.
  */
-export function useDocumentTitle(title, description, { noindex = false } = {}) {
+export function useDocumentTitle(
+  title,
+  description,
+  { noindex = false, brandSuffix = true } = {}
+) {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    const fullTitle = title ? `${title} — ${site.name}` : DEFAULT_TITLE;
+    let fullTitle = DEFAULT_TITLE;
+    if (title) fullTitle = brandSuffix ? `${title} — ${site.name}` : title;
     const url = `${window.location.origin}${pathname}`;
 
     document.title = fullTitle;
@@ -54,7 +65,7 @@ export function useDocumentTitle(title, description, { noindex = false } = {}) {
         content: description,
       });
     }
-  }, [title, description, noindex, pathname]);
+  }, [title, description, noindex, brandSuffix, pathname]);
 }
 
 export default useDocumentTitle;

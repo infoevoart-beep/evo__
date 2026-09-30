@@ -249,6 +249,87 @@ export const routes = [
   },
 ];
 
+/**
+ * Landmarks within reach, nearest first.
+ *
+ * This is the page's main organic asset: almost nobody searches for a
+ * smokehouse in Beragala, because they have never heard of one. They search
+ * for the waterfall, then for somewhere to eat near it. Naming the landmarks
+ * and giving an honest distance is what makes those searches find us, and it
+ * is genuinely useful to somebody planning a day.
+ *
+ * DISTANCES ARE APPROXIMATE and were derived from mapping data, not driven.
+ * Hill-country roads are slow and the times assume that. Anyone who knows the
+ * roads should correct these — a wrong number here is worse than no number.
+ */
+export const nearbyLandmarks = [
+  {
+    name: 'Adisham Bungalow',
+    also: "St Benedict's Monastery",
+    distance: 'Approx. 10 km',
+    time: 'About 20 min',
+    text: "Haputale's main heritage stop — an English country house and monastery garden above the tea.",
+  },
+  {
+    name: 'Haputale town',
+    distance: 'Approx. 10 km',
+    time: 'About 30 min',
+    text: 'The nearest town, and the railway stop for anyone arriving on the hill-country line.',
+  },
+  {
+    name: 'Thangamale Bird Sanctuary',
+    distance: 'Approx. 12 km',
+    time: 'About 25 min',
+    text: 'Montane forest and birding trails on the ridge walk out of Haputale.',
+  },
+  {
+    name: 'Bambarakanda Falls',
+    also: "Sri Lanka's tallest waterfall",
+    distance: 'Approx. 18 km',
+    time: 'About 40 min',
+    text: 'At 263 m the highest fall in the country, reached off the Beragala road through Kalupahana.',
+  },
+  {
+    name: 'Diyaluma Falls',
+    also: 'Second-highest in Sri Lanka',
+    distance: 'Approx. 21 km',
+    time: 'About 40 min',
+    text: 'The natural infinity pools at the top are the draw. Come down hungry — we are the nearest proper kitchen.',
+  },
+  {
+    name: 'Dambatenne Tea Factory',
+    distance: 'Approx. 22 km',
+    time: 'About 45 min',
+    text: "Lipton's own factory, still working, and the turn-off for the climb to the seat above it.",
+  },
+  {
+    name: "Lipton's Seat",
+    distance: 'Approx. 28 km',
+    time: 'About 1 hr 15',
+    text: 'The sunrise viewpoint over the Dambatenne estates. Most people are back down and looking for breakfast by nine.',
+  },
+  {
+    name: 'Ella',
+    also: "Nine Arches Bridge, Little Adam's Peak, Ravana Falls",
+    distance: 'Approx. 30 km',
+    time: 'About 1 hr',
+    text: 'We are not in Ella — we are the stop between Ella and Haputale, which is the better lunch either way.',
+  },
+  {
+    name: "Horton Plains & World's End",
+    distance: 'Approx. 35 km',
+    time: 'About 1 hr 30',
+    text: 'Reachable from this side via Ohiya, not only from Nuwara Eliya. Go at dawn before the cloud closes in.',
+  },
+  {
+    name: 'Pekoe Trail, Stage 13',
+    also: 'Haputale to St Catherine',
+    distance: 'Trailhead approx. 10 km',
+    time: 'About 30 min',
+    text: 'The long-distance tea-country trail passes through Haputale. Walkers finish the stage hungry.',
+  },
+];
+
 export const reservePoints = [
   { key: '—', text: 'Groups, tour parties and coach stops welcome' },
   { key: '—', text: 'Set and group menus available on request' },
