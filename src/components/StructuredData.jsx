@@ -149,7 +149,13 @@ export function StructuredData() {
       const script = document.createElement('script');
       script.type = 'application/ld+json';
       script.dataset.hillsedge = data['@type'].toLowerCase();
-      script.textContent = JSON.stringify(data);
+      /*
+       * Setting textContent on a detached element does not go through the
+       * HTML parser, so a "</script>" in the data cannot break out here. The
+       * escape is belt-and-braces for the day this markup is server-rendered
+       * or serialised, where it would: JSON.stringify leaves "<" alone.
+       */
+      script.textContent = JSON.stringify(data).replace(/</g, '\\u003c');
       document.head.appendChild(script);
       return script;
     });

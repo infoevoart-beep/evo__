@@ -258,6 +258,8 @@
   margin-bottom: 30px;
 }
 
+/* The 404 and the error screen lead with an h1; other states use an h2. */
+.state h1,
 .state h2 {
   font-size: clamp(27px, 4.6vw, 58px);
   font-weight: 500;
@@ -265,6 +267,7 @@
   margin: 0 auto;
 }
 
+.state h1 em,
 .state h2 em {
   font-style: italic;
   color: var(--forest);

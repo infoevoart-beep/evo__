@@ -8,7 +8,7 @@ export default function NotFound() {
     <section className="sec state not-found">
       <div className="wrap">
         <span className="lab">Error 404</span>
-        <h2>That page has drifted off down the valley.</h2>
+        <h1>That page has drifted off down the valley.</h1>
         <div className="rule" />
         <div className="cta-btns not-found-actions">
           <Button to="/" variant="fill">

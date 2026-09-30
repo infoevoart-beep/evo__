@@ -42,11 +42,11 @@ export class ErrorBoundary extends Component {
       <section className="sec state not-found">
         <div className="wrap">
           <span className="lab">{stale ? 'New Version Available' : 'Something Went Wrong'}</span>
-          <h2>
+          <h1>
             {stale
               ? 'The site was updated while you were here.'
               : 'That part of the page failed to load.'}
-          </h2>
+          </h1>
           <div className="rule" />
           <p className="lede">
             {stale
