@@ -65,6 +65,16 @@ server {
 > its own. If you add headers inside `location /assets/`, repeat the security
 > headers there too.
 
+## What the build produces
+
+| File | Purpose |
+|---|---|
+| `index.html`, `assets/` | The app. Asset filenames are content-hashed. |
+| `sitemap.xml`, `robots.txt` | Generated from the router's route list. |
+| `llms.txt` | Plain-text brief for AI answer engines, generated from the same page data. |
+| `_headers`, `_redirects` | Netlify / Cloudflare Pages. |
+| `.htaccess` | Apache / cPanel. **Hidden file — make sure your upload tool copies it.** |
+
 ## Before going live
 
 - **HTTPS is required.** `upgrade-insecure-requests` and HSTS assume it, and
@@ -82,10 +92,45 @@ server {
 ## Verifying a deploy
 
 ```bash
-curl -I https://your-domain/                 # security headers present
-curl -o /dev/null -w '%{http_code}\n' https://your-domain/cuisine   # expect 200
+curl -I https://your-domain/                                        # security headers present
+curl -o /dev/null -w '%{http_code}\n' https://your-domain/cuisine   # expect 200, not 404
+curl -o /dev/null -w '%{http_code}\n' https://your-domain/llms.txt  # expect 200
 ```
 
 Then load the site and check the browser console is free of CSP violations.
 If you add a third-party script, analytics or embed later, it will be blocked
-until you add its origin to the CSP in all four places.
+until you add its origin to the CSP in all four places (`vercel.json`,
+`public/_headers`, `public/.htaccess`, and the nginx block above).
+
+Worth checking once the domain is live:
+
+- **Rich Results Test** (`search.google.com/test/rich-results`) — the visit
+  page should report Restaurant, Breadcrumb and FAQ.
+- **Search Console** — submit `sitemap.xml`, then read the search-terms report
+  after a few weeks. It beats any keyword guess.
+- **Security headers** (`securityheaders.com`) — expect an A grade with the
+  shipped config.
+
+## SEO facts that live in the code
+
+These are generated, not hand-written, so edit the source and rebuild:
+
+- **Page titles and descriptions** — the `useDocumentTitle` call at the top of
+  each file in `src/pages/`. Keep titles under 60 characters and descriptions
+  under 160, or search engines truncate them.
+- **Nearby landmarks and distances** — `nearbyLandmarks` in
+  `src/data/content.js`. These feed the visit page, the structured data and
+  `llms.txt` at once. **The distances are derived from mapping data, not
+  driven — have someone who knows the roads check them.**
+- **FAQs** — `faqs` in `src/data/content.js`, published as FAQPage structured
+  data that search and AI answers quote directly.
+
+Two positions are deliberately unstated and cost traffic while they stay that
+way:
+
+- **Halal.** Nothing on the site claims it either way. It is a hard yes/no
+  filter for Middle Eastern and Malaysian visitors — if they cannot confirm
+  it, they do not come.
+- **Named cuts.** The smokehouse pages never name a cut. If brisket, ribs or
+  pulled pork are actually on the menu, saying so is the cheapest search win
+  available.
