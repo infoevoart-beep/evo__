@@ -1,143 +1,140 @@
 # Hillsedge Beragala
 
-The Hillsedge Beragala site — a mountain smokehouse and dining destination in
-Sri Lanka's hill country — built as a React single-page application with Vite.
+A mountain smokehouse and dining destination in Beragala, Sri Lanka, on the
+hill road between Ella and Haputale.
+
+React front end, Express API, in one npm workspace.
+
+```
+.
+├── client/              React 18 + Vite single-page app
+│   ├── public/          static files copied verbatim into the build
+│   ├── scripts/         image and SEO generation, run before dev/build
+│   └── src/
+│       ├── api/         the one place that talks to the server
+│       ├── components/  presentational, no data fetching
+│       ├── data/        copy and content, kept out of the components
+│       ├── hooks/       scroll, reveal, document title
+│       ├── pages/       one per route
+│       ├── styles/      tokens, base, components, sections, motion, responsive
+│       └── test/        shared render helpers and jsdom setup
+├── server/              Node 20 + Express
+│   ├── src/
+│   │   ├── config/      every environment-dependent value, read once
+│   │   ├── middleware/  security headers, rate limiting, error handling
+│   │   ├── routes/      health, reservations
+│   │   ├── services/    reservation storage
+│   │   └── validators/  request validation, independent of the client
+│   └── tests/
+└── docs/
+    └── DEPLOYMENT.md    host-by-host setup and the launch checklist
+```
 
 ## Running it
 
+Node 20.11 or newer (`.nvmrc` pins it).
+
 ```bash
-npm install
-npm run dev      # development server
-npm run build    # production bundle in dist/
-npm run preview  # serve the production bundle locally
-npm run images   # regenerate the responsive image variants
-npm run seo      # regenerate sitemap.xml and robots.txt
-npm test         # run the test suite
+npm install          # installs both workspaces
+cp .env.example .env # nothing secret in it yet, but it is the habit
+npm run dev          # client on :5173, server on :4000, /api proxied
 ```
 
-`dev` and `build` run the generators first, so derived files are never out of
-step with their sources. Those outputs — the image variants, `sitemap.xml` and
-`robots.txt` — are gitignored; only the full-size originals in
-`src/assets/images` and the route list they come from are tracked.
+`npm run dev` starts both. The Vite dev server proxies `/api` to Express, so
+the front end calls relative paths in development exactly as it does in
+production, and no CORS is involved.
 
-## What this is
+### Production
 
-The site began as six standalone HTML files, each carrying its own copy of the
-stylesheet, the header, the footer, the scroll-animation scripts, the brand
-logo and — as base64 data URIs — the photographs. This version keeps the design
-and every word of the copy, and removes the duplication:
-
-| Duplicated before | Now |
-| --- | --- |
-| 23 base64-embedded copies of 13 photographs (~1.6 MB inline) | 13 image files in `src/assets/images`, referenced from one map |
-| The ~58 KB logo outline inlined on all six pages | One `<BrandMarkSprite />` at the app root, referenced by `<use>` |
-| ~30 KB of identical CSS repeated per page | One stylesheet in `src/styles`, loaded once |
-| Header, mobile sheet and footer markup written six times | `Header` / `Footer` components |
-| Hero, section heads, split rows, closing bands re-typed per page | `PageHero`, `SectionHead`, `SplitFeature`, `Bands` |
-| Three IntersectionObserver scripts repeated per page | `useReveal`, `useParallax`, `useScrolled` hooks |
-| Nav, footer and contact details restated in every file | `src/data/site.js` |
-
-Page copy that is list-shaped (the nine cuisines, the FAQ, the routes, the
-pillars) lives in `src/data/content.js`, so components stay layout-only.
-
-## Tests
-
-`npm test` runs the suite (vitest + testing-library). It covers the behaviour
-that is easy to break silently in a refactor:
-
-- **Data integrity** — every photograph resolves to a real asset with alt text,
-  a caption and a correctly ordered WebP ladder that is never upscaled past its
-  source; the gallery lists each photograph exactly once; every internal footer
-  link points at a real route.
-- **Header** — the sheet opens, locks the page behind it, closes on Escape, and
-  stays out of the tab order while closed.
-- **Gallery** — filters narrow the wall and restore it, `aria-selected` tracks
-  the active filter, no filter is ever empty, and the lightbox opens and closes.
-- **Reservation form** — the WhatsApp handoff carries the right number and the
-  guest's details, marks empty fields, and suppresses the browser's own submit.
-
-## Layout
-
-```
-src/
-  assets/images/     the 13 photographs
-  components/        Header, Footer, PageHero, SplitFeature, Bands, …
-  data/              site.js, content.js, images.js, brandMarkPaths.js
-  hooks/             useReveal, useParallax, useScrolled, useBodyScrollLock, …
-  pages/             Home, About, Smokehouse, Cuisine, Gallery, Visit, NotFound
-  styles/            tokens, base, components, sections, motion, responsive
+```bash
+npm run build        # builds the client into client/dist
+npm start            # Express serves that build and the API on :4000
 ```
 
-## Images
+`npm run build` runs two generators first: the responsive image variants, and
+`sitemap.xml` / `robots.txt` / `llms.txt` from the site's own route list and
+page data. Nothing has to be regenerated by hand.
 
-`scripts/generate-images.mjs` derives a WebP ladder (480 / 960 / 1440 px, never
-upscaled) from each photograph in `src/assets/images`. Where WebP does not beat
-an already well-compressed JPEG at full width, the script steps the quality down
-until it does, so no variant is ever heavier than the source it replaces.
+## Commands
 
-`<Picture>` emits that ladder as a `<source srcset>` with the JPEG as the
-fallback, and always sets intrinsic `width`/`height` so the layout does not jump
-as images load. Each caller passes a `sizes` describing how wide the image
-actually renders.
+| Command | What it does |
+|---|---|
+| `npm run dev` | Both workspaces, watching |
+| `npm run build` | Production build of the client |
+| `npm start` | Run the server (serves `client/dist` if present) |
+| `npm test` | Every test in both workspaces |
+| `npm run test:client` / `test:server` | One workspace |
+| `npm run lint` / `lint:fix` | ESLint across the repo |
+| `npm run format` / `format:check` | Prettier |
 
-The effect on the gallery — the heaviest page — measured against the built
-bundle:
+## The API
 
-| | Before | After |
-| --- | --- | --- |
-| 13 photographs, 390 px viewport | 1.93 MB | 407 KB |
+| Method | Path | Purpose |
+|---|---|---|
+| `GET` | `/api/health` | Status, uptime — for monitors and health checks |
+| `POST` | `/api/reservations` | Take a table booking |
 
-## Mobile
+`POST /api/reservations` takes `{ name, guests, date, time, message }` and
+answers `201` with the booking's id, or `422` with per-field messages. The
+server validates independently of the browser: the front end checks the same
+rules so the guest gets an immediate answer, but anything can post here, so
+nothing is trusted and the stored record is assembled field by field from
+known keys.
 
-The layout is fluid from 320 px upward, verified with no horizontal overflow at
-390 / 820 / 1440 px. Specifically:
+Bookings are appended to `server/data/reservations.jsonl`, one JSON object
+per line. Append-only, so a half-written line can only damage the record
+being written, and the file reads with `tail` without any tooling. A
+restaurant takes a handful of bookings a day; a database would be something
+to install, back up and secure in exchange for nothing. Only
+`services/reservationStore.js` knows how records are stored — swap that one
+module if it ever stops being true.
 
-- Breakpoints at 1100 px (nav becomes the full-screen sheet), 900 px (two-column
-  editorial layouts collapse), 720 px (single column, full-width buttons) and
-  480 px (small phones).
-- `env(safe-area-inset-*)` respected in the header, the sheet, the footer and
-  the lightbox, so nothing hides behind a notch or a home indicator.
-- Every standalone control is at least 44 × 44 px on touch devices; form inputs
-  are 16 px so iOS Safari does not zoom on focus.
-- Hover flourishes (image zoom, card tilt, caption fades) are gated behind
-  `@media (hover: hover)`; on touch, photo captions are always visible instead
-  of hover-gated.
-- Parallax is skipped for coarse pointers and for `prefers-reduced-motion`.
-- A separate landscape rule keeps the hero from filling more than a short
-  screen.
+The endpoint is rate-limited (ten attempts per address per fifteen minutes by
+default) because it is unauthenticated and writes to disk.
 
-## SEO and metadata
+## Decisions worth knowing
 
-`useDocumentTitle` sets the title, description, canonical URL, robots directive
-and Open Graph tags per route. Absolute URLs are built from the live origin, so
-they are correct on whatever domain the site is served from — nothing to
-configure. `StructuredData` adds `Restaurant` JSON-LD (address, coordinates,
-the nine cuisines, reservations) the same way. The 404 route sets
-`noindex, follow`.
+**Bookings go to the API, with WhatsApp as a second route.** The form posts to
+the server first, so the kitchen has a record whether or not the guest does
+anything else. WhatsApp stays on the page because it is how most people here
+prefer to reach a restaurant, and because it is the way through if the server
+is unreachable.
 
-`sitemap.xml` and `robots.txt` are generated from the router's own route list
-in `src/data/routes.js`, which is what stops them drifting. **The production
-domain is the one constant to change** — `PRODUCTION_ORIGIN` in that file
-currently reads `https://hillsedgeberagala.com`.
+**The webfont stylesheet does not block first paint.** A plain
+`rel="stylesheet"` holds the render tree until Google Fonts answers; measured
+against a host that hangs rather than fails, that was over twelve seconds of
+blank page. It now loads on `media="print"` and is switched on once it
+arrives.
 
-## Deploying
+**AVIF is only emitted where it wins.** Each variant is encoded, scored
+against the WebP it would replace, and kept only if it matches on SSIM and is
+smaller — per photograph, never per width, because `<picture>` commits to one
+source type and will not fall back for a missing size.
 
-The build is a static bundle in `dist/`, but routing is client-side, so the
-host must fall every path back to `index.html`:
+**Content-Security-Policy is strict and `script-src` is `'self'`.** No inline
+scripts anywhere. Any third-party script added later — analytics, a chat
+widget, a booking embed — will be blocked until its origin is added to the
+policy in every config that carries it.
 
-- **Netlify** — `public/_redirects` is already in place.
-- **Vercel** — `vercel.json` is already in place.
-- **nginx** — `try_files $uri $uri/ /index.html;`
-- **Apache** — a `mod_rewrite` fallback to `/index.html`.
+## Configuration
 
-Without that rewrite the site works from the home page but deep links such as
-`/visit` return 404 on a hard refresh.
+Copy `.env.example` to `.env`. Two values are worth a second look before
+going live:
 
-## Notes
-- The reservation form composes a WhatsApp message and hands it to the guest —
-  nothing is transmitted until they press send inside WhatsApp. Swap
-  `ReservationForm`'s submit handler for a backend call if that changes.
-- The original markup carried two different telephone numbers — a placeholder
-  (`+94 00 000 0000`) in every footer and the real one (`074 237 3394`) on the
-  visit page. Both now come from `site.phone`, so the footer shows the real
-  number.
+- `TRUST_PROXY` — the number of proxies in front of the process. Leave `0` if
+  it is directly exposed. Trusting a forwarded header nobody set lets a
+  client spoof its address and walk around the rate limiter.
+- `RESERVATIONS_FILE` — put this on a volume that survives a redeploy.
+
+Three content values are deliberately unset in `client/src/data/site.js` and
+`client/src/data/content.js`; `docs/DEPLOYMENT.md` lists them.
+
+## Deployment
+
+See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md). The front end can be served by
+this Express process or by any static host — configs for Apache, nginx,
+Netlify, Cloudflare Pages and Vercel all ship with it.
+
+---
+
+Creative web concept by [EVO ART (PVT) LTD](https://www.evoart.lk).

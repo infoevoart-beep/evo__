@@ -1311,6 +1311,47 @@
   width: 100%;
 }
 
+.form-failure {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--ember);
+  border-radius: 6px;
+  background: rgba(194, 98, 44, 0.08);
+  font-size: 13.5px;
+  color: var(--bone);
+}
+
+/* The confirmation that replaces the form once a booking is accepted. */
+.form-sent {
+  display: block;
+}
+
+.form-sent h3 {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 3vw, 34px);
+  font-weight: 500;
+  margin: 14px 0 16px;
+}
+
+.form-sent p {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--body-dark);
+  margin: 0 0 14px;
+}
+
+/* A button that has to read as part of a sentence. */
+.link-button {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: var(--glow);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .form-note {
   grid-column: 1 / -1;
   font-size: 12.5px;

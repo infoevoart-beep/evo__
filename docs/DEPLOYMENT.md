@@ -1,15 +1,76 @@
 # Deploying Hillsedge Beragala
 
-The site is a static single-page app. `npm run build` writes everything a
-host needs into `dist/` — there is no server-side component and no runtime
-environment to configure.
+There are two ways to run this, and the right one depends on whether you want
+the bookings API.
+
+| | What runs | Bookings |
+|---|---|---|
+| **A — Node** | Express serves the front end and the API | Saved server-side, WhatsApp as a second route |
+| **B — Static** | Any static host serves `client/dist` | WhatsApp only; the form's API call fails and falls back |
+
+**Option A is the one to pick** unless you specifically want static hosting.
+Without the API, a booking only exists if the guest remembers to press send
+inside WhatsApp.
+
+## Option A — Node (recommended)
+
+Needs a host that runs Node 20.11+: a VPS, Railway, Render, Fly, a cPanel
+Node app, anything with a process.
 
 ```bash
 npm install
-npm run build     # regenerates images + sitemap, then builds into dist/
+npm run build          # builds the client into client/dist
+cp .env.example .env   # then edit it — see below
+npm start              # Express serves client/dist and /api on PORT
 ```
 
-Upload the **contents** of `dist/` to the web root.
+Put it behind nginx or your platform's router for TLS. Two settings matter:
+
+- **`TRUST_PROXY`** — the number of proxies in front of the process. `1`
+  behind a single nginx or Cloudflare, `0` if directly exposed. Wrong here
+  and the rate limiter either sees every visitor as one client, or trusts a
+  header a client can forge.
+- **`RESERVATIONS_FILE`** — bookings are appended here. Point it at a volume
+  that survives a redeploy, or you lose them on every deploy.
+
+Keep the process alive with systemd, pm2, or your platform's own supervisor.
+It handles `SIGTERM` and finishes in-flight requests before exiting, so a
+restart does not drop a booking that was already accepted.
+
+Point your monitor at `GET /api/health`.
+
+### nginx in front of Node
+
+```nginx
+server {
+    server_name hillsedgeberagala.com;
+
+    location / {
+        proxy_pass http://127.0.0.1:4000;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+With this, set `TRUST_PROXY=1`. Express sends the security headers itself, so
+do not add them here as well — you would get duplicates.
+
+## Option B — Static hosting
+
+No Node, no API. The booking form posts to `/api/reservations`, gets nothing,
+shows its "could not reach the kitchen" message and offers WhatsApp — so
+bookings still work, they just are not recorded.
+
+```bash
+npm install
+npm run build     # regenerates images + sitemap, then builds client/dist
+```
+
+Upload the **contents** of `client/dist/` to the web root.
 
 ## Two things every host must get right
 
@@ -23,16 +84,16 @@ change the others.
 
 | Host | File | Notes |
 |---|---|---|
-| Vercel | `vercel.json` (repo root) | Picked up automatically. |
-| Netlify / Cloudflare Pages | `dist/_headers`, `dist/_redirects` | Picked up automatically. |
-| Apache / cPanel | `dist/.htaccess` | Needs `mod_headers` and `mod_rewrite`. |
+| Vercel | `client/vercel.json` | Picked up automatically. |
+| Netlify / Cloudflare Pages | `client/dist/_headers`, `_redirects` | Picked up automatically. |
+| Apache / cPanel | `client/dist/.htaccess` | Needs `mod_headers` and `mod_rewrite`. |
 | nginx | see below | Paste into your server block. |
 
 ### nginx
 
 ```nginx
 server {
-    root /var/www/hillsedge/dist;
+    root /var/www/hillsedge/client/dist;
     index index.html;
 
     add_header Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; frame-src https://maps.google.com https://www.google.com; connect-src 'self'; manifest-src 'self'; upgrade-insecure-requests" always;
@@ -79,10 +140,10 @@ server {
 
 - **HTTPS is required.** `upgrade-insecure-requests` and HSTS assume it, and
   HSTS with `preload` is hard to undo — serve HTTPS correctly first.
-- **Set the domain.** `PRODUCTION_ORIGIN` in `src/data/routes.js` feeds
+- **Set the domain.** `PRODUCTION_ORIGIN` in `client/src/data/routes.js` feeds
   `sitemap.xml` and `robots.txt`. It is currently
   `https://hillsedgeberagala.com`.
-- **Fill in the two blanks** in `src/data/site.js`:
+- **Fill in the two blanks** in `client/src/data/site.js`:
   - `socialProfiles` — Instagram and Facebook URLs. Icons stay hidden while
     these are `null`, rather than linking nowhere.
   - `serviceHours` — `opens` and `closes` as `"HH:MM"`. Opening hours are
@@ -99,8 +160,8 @@ curl -o /dev/null -w '%{http_code}\n' https://your-domain/llms.txt  # expect 200
 
 Then load the site and check the browser console is free of CSP violations.
 If you add a third-party script, analytics or embed later, it will be blocked
-until you add its origin to the CSP in all four places (`vercel.json`,
-`public/_headers`, `public/.htaccess`, and the nginx block above).
+until you add its origin to the CSP in all four places (`client/vercel.json`, `client/public/_headers`, `client/public/.htaccess`, the
+nginx block above, and `server/src/middleware/security.js`).
 
 Worth checking once the domain is live:
 
@@ -116,13 +177,13 @@ Worth checking once the domain is live:
 These are generated, not hand-written, so edit the source and rebuild:
 
 - **Page titles and descriptions** — the `useDocumentTitle` call at the top of
-  each file in `src/pages/`. Keep titles under 60 characters and descriptions
+  each file in `client/src/pages/`. Keep titles under 60 characters and descriptions
   under 160, or search engines truncate them.
 - **Nearby landmarks and distances** — `nearbyLandmarks` in
-  `src/data/content.js`. These feed the visit page, the structured data and
+  `client/src/data/content.js`. These feed the visit page, the structured data and
   `llms.txt` at once. **The distances are derived from mapping data, not
   driven — have someone who knows the roads check them.**
-- **FAQs** — `faqs` in `src/data/content.js`, published as FAQPage structured
+- **FAQs** — `faqs` in `client/src/data/content.js`, published as FAQPage structured
   data that search and AI answers quote directly.
 
 Two positions are deliberately unstated and cost traffic while they stay that

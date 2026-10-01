@@ -13,7 +13,6 @@ export function BrandMarkSprite() {
               verbatim, and keying on the data made React drop it. The list is
               static and never reorders, so the index is a stable identity. */}
           {brandMarkPaths.map((d, index) => (
-            // eslint-disable-next-line react/no-array-index-key
             <path key={index} fillRule="nonzero" fill="currentColor" d={d} />
           ))}
         </g>

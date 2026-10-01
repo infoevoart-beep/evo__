@@ -1,0 +1,28 @@
+{
+  "name": "@hillsedge/server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Hillsedge Beragala API — serves the built front end and takes table reservations.",
+  "license": "UNLICENSED",
+  "type": "module",
+  "main": "src/index.js",
+  "engines": {
+    "node": ">=20.11"
+  },
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "compression": "^1.7.5",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.0.0"
+  },
+  "devDependencies": {
+    "supertest": "^7.0.0",
+    "vitest": "^2.1.9"
+  }
+}

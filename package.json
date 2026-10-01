@@ -1,33 +1,37 @@
 {
   "name": "hillsedge-beragala",
-  "private": true,
   "version": "1.0.0",
+  "private": true,
   "type": "module",
-  "description": "Hillsedge Beragala — mountain smokehouse & dining destination. React single-page application.",
-  "scripts": {
-    "images": "node scripts/generate-images.mjs",
-    "seo": "node scripts/generate-seo.mjs",
-    "predev": "npm run images",
-    "dev": "vite",
-    "prebuild": "npm run images && npm run seo",
-    "build": "vite build",
-    "preview": "vite preview",
-    "test": "vitest run",
-    "test:watch": "vitest"
+  "description": "Hillsedge Beragala \u2014 mountain smokehouse & dining destination. React front end, Express API.",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=20.11"
   },
-  "dependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-router-dom": "^7.18.3"
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev": "concurrently -n client,server -c cyan,magenta \"npm:dev:client\" \"npm:dev:server\"",
+    "dev:client": "npm run dev --workspace client",
+    "dev:server": "npm run dev --workspace server",
+    "build": "npm run build --workspace client",
+    "start": "npm run start --workspace server",
+    "test": "npm run test --workspaces --if-present",
+    "test:client": "npm run test --workspace client",
+    "test:server": "npm run test --workspace server",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^7.0.1",
-    "@testing-library/react": "^16.3.2",
-    "@testing-library/user-event": "^14.6.6",
-    "@vitejs/plugin-react": "^4.3.1",
-    "jsdom": "^30.0.1",
-    "sharp": "^0.35.4",
-    "vite": "^5.4.8",
-    "vitest": "^2.1.9"
+    "concurrently": "^9.1.0",
+    "eslint": "^9.17.0",
+    "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "globals": "^15.14.0",
+    "prettier": "^3.4.2"
   }
 }

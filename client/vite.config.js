@@ -10,6 +10,19 @@ export default defineConfig({
     outDir: 'dist',
     assetsInlineLimit: 0,
   },
+  server: {
+    /*
+     * In production the Express server serves this build and the API from
+     * one origin, so the app calls /api with a relative path. Proxying the
+     * same path in development keeps that true and avoids needing CORS.
+     */
+    proxy: {
+      '/api': {
+        target: process.env.VITE_DEV_API_TARGET ?? 'http://localhost:4000',
+        changeOrigin: true,
+      },
+    },
+  },
   test: {
     environment: 'jsdom',
     globals: true,

@@ -1,0 +1,7 @@
+dist
+node_modules
+client/src/assets/images/generated
+client/public/sitemap.xml
+client/public/robots.txt
+client/public/llms.txt
+package-lock.json
