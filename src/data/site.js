@@ -155,6 +155,13 @@ export const photos = {
   },
 };
 
+/** The studio credit in the footer's bottom bar. */
+export const credit = {
+  prefix: 'Creative web concept by',
+  name: 'EVO ART (PVT) LTD',
+  href: 'https://www.evoart.lk',
+};
+
 /**
  * The image social platforms show when a link to the site is shared. Any
  * photograph works; this one reads clearly at card size.

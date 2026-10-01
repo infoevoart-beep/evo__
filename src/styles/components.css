@@ -415,6 +415,26 @@ footer {
   color: rgba(247, 243, 236, 0.38);
 }
 
+/* Sits between the copyright and the back-to-top, and reads as quietly as
+   both until the studio name is hovered. */
+.fb-credit a {
+  color: rgba(247, 243, 236, 0.62);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(247, 243, 236, 0.18);
+  padding-bottom: 1px;
+  transition: color 0.3s, border-color 0.3s;
+}
+
+.fb-credit a:hover {
+  color: var(--glow);
+  border-bottom-color: var(--glow);
+}
+
+.fb-credit a:focus-visible {
+  outline: 2px solid var(--glow);
+  outline-offset: 3px;
+}
+
 .top {
   display: inline-flex;
   align-items: center;

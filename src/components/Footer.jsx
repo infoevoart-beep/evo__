@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { footerColumns, site } from '../data/site';
+import { credit, footerColumns, site } from '../data/site';
 import { BrandMark } from './BrandMark';
 import { SocialIcons } from './SocialIcons';
 
@@ -47,6 +47,12 @@ export function Footer() {
 
         <div className="fb">
           <span>© {new Date().getFullYear()} {site.name}. All rights reserved.</span>
+          <span className="fb-credit">
+            {credit.prefix}{' '}
+            <a href={credit.href} target="_blank" rel="noopener noreferrer">
+              {credit.name}
+            </a>
+          </span>
           <button type="button" className="top" onClick={scrollTop}>
             Back to top ↑
           </button>
